@@ -23,4 +23,4 @@ debug:
 profile:
 	$(CC) $(LFLAGS) $(DEBUGFLAGS) $(PROFILEFLAGS) -o random_spr_walk random_spr_walk.cpp
 test:
-	./random_spr_walk 
+	./random_spr_walk  -ntax 10 -sfreq 2 -nsamples 10
