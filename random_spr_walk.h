@@ -52,6 +52,7 @@ Node *random_tree(int N) {
 		// 	add new leaf
 		new_node->add_child(new Node(itos(i)));
 	}
+	T->normalize_order();
 	T->set_depth(0);
 	T->fix_depths();
 	T->preorder_number();
