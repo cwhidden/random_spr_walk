@@ -79,25 +79,37 @@ void add_neighbor(Node *n, Node *new_sibling, Node *root, list<Node *> &neighbor
 	// check for obvious duplicates
 	if (n->parent() != NULL &&
 			(new_sibling == n->parent())) {
-	// cout << "rule 1" << endl;
+//	 cout << "rule 1" << "\t";
 		return;
 	}
-	if (n->parent() != NULL &&
+	// do not move to aunt (equiv to moving aunt here)
+	else if (n->parent() != NULL &&
 			new_sibling->parent() != NULL &&
 			n->parent()->parent() == new_sibling->parent()) {
-//		cout << "rule 2" << endl;
+//		cout << "rule 2" << "\t";
 		return;
 	}
-	if (new_sibling == n->get_sibling()) {
-//		cout << "rule 3" << endl;
+	// do not move to grandmother (equiv to moving aunt to sibling)
+	else if (n->parent() != NULL &&
+			n->parent()->parent() == new_sibling) {
+//		cout << "rule 3" << "\t";
 		return;
 	}
-//		cout << "foo3" << endl;
-//	cout << "foo4" << endl;
-	if (new_sibling == n) {
-//		cout << "rule 4" << endl;
+	else if (new_sibling == n->get_sibling()) {
 		return;
 	}
+	else if (new_sibling == n) {
+		return;
+	}
+//	else {
+//		cout << "      " << "\t";
+//	}
+
+//	cout << n->str_subtree() << "\t" << new_sibling->str_subtree() << "\t";
+
+
+
+
 	Node *old_sibling = n->get_sibling();
 	//if (new_sibling != old_sibling)
 	//

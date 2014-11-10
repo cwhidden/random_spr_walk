@@ -38,6 +38,21 @@ Node *random_tree(int N) {
 	return T;
 }
 
+// determine the number of SPR neighbors of a given rooted tree
+// O(N) running time, where N is the number of leaves
+// several SPRs result in the same tree, including:
+// 1. moving a subtree to its aunt
+// 2. moving a subtree to its grandmother
+// 3. moving the aunt to the subtree's sibling
+// we can avoid this by ignoring 1. and 2. moves
+// moreover, moving a subtree to its sibling or parent gives the original topology
+// this gives 4 ignored moves per subtree (2 for subtrees at depth 1)
+// the number of moves for a subtree with k descendant nodes is thus:
+// max(0, 2n-1-k-4)
+// ( max(0, 2n-1-k-2) for depth 1 nodes)
+int num_rspr_neighbors(Node *T) { 
+}
+
 string itos(int i) {
 	stringstream ss;
 	string a;
