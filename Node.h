@@ -1249,7 +1249,7 @@ class Node {
 	
 	// find the leaves in this node's subtree
 	vector<Node *> find_leaves() {
-		vector<Node *> leaves = vector<Node *>();
+		vector<Node *> leaves = vector<Node *>(this->size());
 		if (is_leaf())
 			leaves.push_back(this);
 		else
@@ -1271,7 +1271,7 @@ class Node {
 	// find the interior nodes in this node's subtree
 	// does not include this node
 	vector<Node *> find_interior() {
-		vector<Node *> interior = vector<Node *>();
+		vector<Node *> interior = vector<Node *>(this->size());
 		if (!is_leaf())
 			find_interior_hlpr(interior);
 		return interior;
@@ -1291,7 +1291,7 @@ class Node {
 	// find the descendants nodes in this node's subtree
 	// does not include this node
 	vector<Node *> find_descendants() {
-		vector<Node *> descendants = vector<Node *>();
+		vector<Node *> descendants = vector<Node *>(this->size());
 		if (!is_leaf())
 			find_descendants_hlpr(descendants);
 		return descendants;
@@ -1306,7 +1306,6 @@ class Node {
 			if (ans == true)
 				return true;
 		}
-		vector<Node *> descendants = vector<Node *>();
 		return false;
 	}
 

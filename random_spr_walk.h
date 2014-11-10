@@ -114,6 +114,7 @@ pair<Node *, Node*> random_spr(Node *T) {
 	Node *source;
 	Node *target;
 	random_spr_hlpr(T, T, total, *descendant_counts, r, &source, &target);
+	delete descendant_counts;
 	return make_pair(source, target);
 }
 
