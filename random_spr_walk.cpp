@@ -142,6 +142,8 @@ int main(int argc, char *argv[]) {
 			if (i % F == 0) {
 				// 11.		output the tree
 				cout << i << ": ";
+				T->normalize_order();
+				T->preorder_number();
 				cout << T->str_subtree() << ";" << endl;
 			}
 			if (!done) {
