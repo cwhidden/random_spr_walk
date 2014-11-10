@@ -2187,6 +2187,12 @@ void normalize_order(map<int, string> *reverse_label_map) {
 	edge_preorder_interval();
 }
 
+void post_spr_clean() {
+	set_depth(0);
+	fix_depths();
+	preorder_number();
+}
+
 
 
 };
