@@ -36,8 +36,24 @@ while(<COMMUTE>) {
 
 while(<CURVATURE>) {
 	chomp;
-	my ($start, $end) = split();
-	print;
+	my @val = split();
+	my $start = $val[0];
+	my $end = $val[1];
+	print $val[0], "\t";
+	print $val[1], "\t";
+	print $val[2], "\t";
+	print $val[3], "\t";
+	print $val[5], "\t";
+	my @frac = split("/", $val[6]);
+	if ($frac[1] > 0) {
+		print $frac[0] / $frac[1];
+	}
+	elsif ($frac[0] == "-") {
+		print "NA";
+	}
+	else {
+		print $frac[0];
+	}
 	print "\t";
 	print $MAT[$start][$end];
 	print "\t";
@@ -46,6 +62,8 @@ while(<CURVATURE>) {
 }
 
 exit;
+
+# example input files
 
 #curvature
 #0	0	(((1,2),3),4);	(((1,2),3),4);	12	0	-

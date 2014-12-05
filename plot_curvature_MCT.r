@@ -3,7 +3,7 @@ in_file <- args[1];
 out_file <- args[2];
 
 cls <- c(distance="numeric", curvature="numeric")
-mydata <- read.csv(in_file, sep=" ", colClasses=cls);
+mydata <- read.csv(in_file, sep="", colClasses=cls);
 
 pdf(paste(out_file, ".pdf", sep=""));
 
@@ -28,9 +28,24 @@ theme_set(theme_bw(16) +
 #		panel.grid.major.x=element_line(size=1)
 	))
 
+
+
+length(mydata$num1)
+tail(mydata)
+#mydata = subset(subset(mydata, mydata$MAT != NA), mydata$distance > 4)
+mydata = subset(mydata, !is.na(mydata$MCT) & mydata$distance > 0)
+length(mydata$num1)
+tail(mydata)
+
+
 #p <- ggplot(mydata, aes(x = log10(scaled_iterations), y = gRMSD, shape = factor(runs), color = factor(chains)))
-p <- ggplot(mydata, aes(x = curvature, y = MCT))
-p + geom_point(size=2, alpha=0.9)
+p <- ggplot(mydata, aes(x = curvature, y = MCT, color=factor(distance)))
+p + geom_point(size=2, alpha=0.5) #+
+#	facet_grid(distance ~ .)
+
+p <- ggplot(mydata, aes(x = MCT, color=factor(distance)))
+p + geom_density() #+
+#		geom_density(color="grey")
 
 dev.off()
 quit()
