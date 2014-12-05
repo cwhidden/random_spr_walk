@@ -7,6 +7,6 @@ for n in {4..7}; do
 	) > walks/random_walks/${n}-taxa/commute${n}.frac.mat
 #				awk '{$5 = ""; print}' |
 
-	R --vanilla < plot_curvature_MCT.r --args walks/random_walks/${n}-taxa/commute${n}.frac.mat commute${n}
+	R --vanilla < plot_curvature_MCT.r --args walks/random_walks/${n}-taxa/commute${n}.frac.mat figs/commute${n}
 
 done
