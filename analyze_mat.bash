@@ -1,3 +1,4 @@
+# note: process_mrbayes_posterior_for_commute_time.bash and mean_access_time.pl are part of https://github.com/cwhidden/sprspace
 for n in {4..7}; do
 
 	echo processing $n-taxa;
@@ -58,7 +59,7 @@ for n in {4..7}; do
 				}
 			' $tree_list > $walk_dir/commute_time_$n
 
-	perl combine_curvature_commute.pl $walk_dir/commute_time_$n $ricci_file > $walk_dir/commute$n.mat
+	perl ./combine_curvature_commute.pl $walk_dir/commute_time_$n $ricci_file > $walk_dir/commute$n.mat
 
 	# cleanup temp file
 	rm $tree_list
