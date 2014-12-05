@@ -9,15 +9,15 @@ for n in {4..7}; do
 
 	# make the tree list of tangletype trees only
 	tree_list=`mktemp`;
-	num1=`awk '{print $1,$3}' ../curvature/tangles/tangle$n.idx | sort -g | uniq | wc -l`
+	num1=`awk '{print $1,$3}' $tangle_file | sort -g | uniq | wc -l`
 	(
-		awk '{print $1,$3}' ../curvature/tangles/tangle$n.idx |
+		awk '{print $1,$3}' $tangle_file |
 				sort -g |
 				uniq;
-		awk '{print $1,$3}' ../curvature/tangles/tangle$n.idx |
+		awk '{print $1,$3}' $tangle_file |
 				sort -g |
 				uniq;
-		awk '{print $2,$4}' ../curvature/tangles/tangle$n.idx |
+		awk '{print $2,$4}' $tangle_file |
 				sort -g  |
 				uniq;
 	) |
@@ -28,9 +28,9 @@ for n in {4..7}; do
 			awk '{print $2,$3}' > $tree_list
 	num2=`cat $tree_list | wc -l`;
 
-	grep -h '(' $walk_dir/stationarity_${n}_* | sed 's/^/tree /' > $walk_dir/$walk_file
-	echo -e "\t"`wc -l $walk_dir/$walk_file | awk '{print $1}'`" trees";
-	process_mrbayes_posterior_for_commute_time.bash $walk_dir $walk_dir/$walk_file $walk_dir/$walk_file 0
+###	grep -h '(' $walk_dir/stationarity_${n}_* | sed 's/^/tree /' > $walk_dir/$walk_file
+###	echo -e "\t"`wc -l $walk_dir/$walk_file | awk '{print $1}'`" trees";
+###	process_mrbayes_posterior_for_commute_time.bash $walk_dir $walk_dir/$walk_file $walk_dir/$walk_file 0
 	mean_access_time.pl --num_trees $num1 --num_trees_2 $num2 --tree_list <(awk '{print $2}' $tree_list | convert_tree.pl convert_list) < $walk_dir/uniq_trees_T |
 			perl -e '
 				open(NUM_FILE, "<$ARGV[0]");
