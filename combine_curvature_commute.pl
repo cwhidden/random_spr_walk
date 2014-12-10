@@ -13,19 +13,29 @@ open(COMMUTE, "<$commute") or die " could not open $commute\n";
 open(CURVATURE, "<$curvature") or die " could not open $commute\n";
 
 my @MAT = ();
+my @MATERR = ();
 my @MCT = ();
+my @MCTERR = ();
 
 while(<COMMUTE>) {
 	chomp;
-	my ($start, $arrow, $end, $mat, $mct) = split();
+	my ($start, $end, $mat, $materr, $mct, $mcterr) = split(",");
 	for my $i ($#MCT..$start) {
 		push(@MCT, []);
+	}
+	for my $i ($#MCTERR..$start) {
+		push(@MCTERR, []);
 	}
 	for my $i ($#MAT..$start) {
 		push(@MAT, []);
 	}
+	for my $i ($#MATERR..$start) {
+		push(@MATERR, []);
+	}
 	$MAT[$start][$end] = $mat;
+	$MATERR[$start][$end] = $materr;
 	$MCT[$start][$end] = $mct;
+	$MCTERR[$start][$end] = $mcterr;
 }
 
 #for my $i (0..$#MCT) {
@@ -57,7 +67,11 @@ while(<CURVATURE>) {
 	print "\t";
 	print $MAT[$start][$end];
 	print "\t";
+	print $MATERR[$start][$end];
+	print "\t";
 	print $MCT[$start][$end];
+	print "\t";
+	print $MCTERR[$start][$end];
 	print "\n";
 }
 
