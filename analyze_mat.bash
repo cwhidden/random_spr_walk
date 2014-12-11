@@ -1,6 +1,6 @@
 # note: process_mrbayes_posteriors.bash and mean_access_time.pl are part of https://github.com/cwhidden/sprspace
 #for n in {4..7}; do
-for n in {4..7}; do
+for n in {7..7}; do
 
 	echo processing $n-taxa;
 	walk_dir=walks/random_walks/$n-taxa

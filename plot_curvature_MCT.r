@@ -37,11 +37,17 @@ mydata = subset(mydata, !is.na(mydata$MCT) & mydata$distance > 0)
 length(mydata$num1)
 tail(mydata)
 
+limits <- aes(ymax = MCT + MCTERR, ymin = MCT - MCTERR)
+
 
 #p <- ggplot(mydata, aes(x = log10(scaled_iterations), y = gRMSD, shape = factor(runs), color = factor(chains)))
 p <- ggplot(mydata, aes(x = curvature, y = MCT, color=factor(distance)))
 p + geom_point(size=2, alpha=0.5) #+
 #	facet_grid(distance ~ .)
+
+p <- ggplot(mydata, aes(x = curvature, y = MCT, color=factor(distance)))
+p + geom_point(size=2) +
+		geom_errorbar(limits)
 
 p <- ggplot(mydata, aes(x = MCT, color=factor(distance)))
 p + geom_density() #+
@@ -49,16 +55,3 @@ p + geom_density() #+
 
 dev.off()
 quit()
-
-		facet_wrap(~ data, scales="free_x") +
-#		scale_x_log10() +
-		scale_fill_brewer("runs", palette="BuPu") +
-		scale_x_continuous(breaks=pretty_breaks(n=3), label=function(x)(sprintf("1e%1.2g", x))) +
-		scale_y_continuous(breaks = c(0,0.02,0.04,0.06,0.08,0.1)) +
-		scale_shape_manual("chains", values=c(21,24)) +
-#		scale_shape_manual(values=c("2","3","4","5","6","7","8")) +
-		guides(fill = guide_legend(override.aes = list(shape=21))) +
-		xlab("log(iterations*runs*chains)") +
-		ylab("root mean square deviation")
-
-
