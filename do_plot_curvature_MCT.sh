@@ -1,5 +1,5 @@
 
-for n in {5..6}; do
+for n in {5..7}; do
 	(
 		echo "num1 num2 tree1 tree2 distance curvature MAT MATERR MCT MCTERR";
 		column -t walks/random_walks/${n}-taxa/commute${n}.mat |
