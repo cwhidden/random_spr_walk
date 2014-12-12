@@ -157,14 +157,14 @@ int main(int argc, char *argv[]) {
 			DEBUG(cout << "\t" << d2 << " neighbors" << endl);
 
 			// 8.			accept with prob max(1, d(T1) / d(T2))
-			double accept_prob = (double)d / (double)d2;
+			double accept_prob = log((double)d / (double)d2);
 			if (DO_TREE_PROB) {
 				//accept_prob *= logl / logl2;
 				// alt
-				//accept_prob *= exp(logl2 - logl);
+				accept_prob += logl2 - logl;
 			}
-			if (accept_prob > 1) {
-				accept_prob = 1;
+			if (accept_prob > log(1)) {
+				accept_prob = log(1);
 			}
 			DEBUG(
 					cout << "\tacceptance probability: ";
@@ -176,7 +176,7 @@ int main(int argc, char *argv[]) {
 			);
 			double r = (double)rand() / (double)RAND_MAX;
 			DEBUG(cout << "\tr = " << r << endl);
-			if (r < accept_prob) {
+			if (log(r) < accept_prob) {
 				// 9.		keep the move
 				DEBUG(cout << "\taccepted" << endl);
 				done = true;
