@@ -19,6 +19,9 @@ int random_spr_hlpr(Node *T, Node *n, int total, vector<int> &descendant_counts,
 void select_neighbor(Node *T, Node *n, int r, Node **source, Node **target);
 int select_neighbor_hlpr(Node *n, int r, Node **source, Node **target);
 bool exclude_target(Node *s, Node *t);
+bool read_tree_probabilities(map<string, double> &tree_prob, string prob_file);
+vector<string> split(string s, string delimiters);
+string strip_branch_lengths(string &s);
 
 // build a random tree with N leaves
 Node *random_tree(int N) {
@@ -31,17 +34,17 @@ Node *random_tree(int N) {
 	int r = rand();
 	stringstream ss;
 	if (r % 3 == 0) {
-		ss << "(0,(1,2))";
+		ss << "(1,(2,3))";
 	}
 	else if (r % 3 == 1) {
-		ss << "((0,2),1)";
+		ss << "((1,3),2)";
 	}
 	else {
-		ss << "((0,1),2)";
+		ss << "((1,2),3)";
 	}
 	T = build_tree(ss.str());
 
-	for (int i = 3; i < N; i++) {
+	for (int i = 4; i <= N; i++) {
 		// 	pick random node
 		vector<Node *> nodes = T->find_descendants();
 		nodes.push_back(T);
@@ -211,5 +214,71 @@ string itos(int i) {
 	ss << i;
 	a = ss.str();
 	return a;
+}
+
+bool read_tree_probabilities(map<string, double> &tree_prob, string prob_file_name) {
+	ifstream prob_file;
+	prob_file.open(prob_file_name);
+	if (!prob_file.good()) {
+		return false;
+	}
+	string line;
+	while(getline(prob_file, line)) {
+		vector<string> field = split(line, " \t");
+		double prob = stod(field[0]);
+		string tree = strip_branch_lengths(field[1]);
+		Node *T = build_tree(tree);
+		T->normalize_order();
+		tree_prob.insert(make_pair(T->str_subtree(), prob));
+		T->delete_tree();
+	}
+	return true;
+}
+
+vector<string> split(string s, string delimiters) {
+	vector<string> v = vector<string>();
+	int current = 0;
+	int prev;
+	int end = s.length();
+	while (current < end) {
+		while (delimiters.find_first_of(s[current]) != string::npos && current < end) {
+			current++;
+		}
+		prev = current;
+		while (delimiters.find_first_of(s[current]) == string::npos && current < end) {
+			current++;
+		}
+		if (prev != current) {
+			v.push_back(s.substr(prev,current-prev));
+		}
+	}
+	return v;
+}
+
+string strip_branch_lengths(string &s) {
+	string r = "";
+	int current = 0;
+	int prev = 0;
+	int end = s.length();
+	while (current < end) {
+		int pos = s.find_first_of(":", prev);
+		if (pos == string::npos) {
+			break;
+		}
+		r.append(s.substr(prev, pos-prev));
+		int next = s.find_first_of(",)(", pos); 
+		if (next == string::npos) {
+			current = end;
+			prev = end;
+		}
+		else {
+			current = next;
+			prev = next;
+		}
+	}
+	if (prev < end) {
+		r.append(s.substr(prev,end-prev));
+	}
+	return r;
 }
 

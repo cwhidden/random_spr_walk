@@ -2196,7 +2196,6 @@ void post_spr_clean() {
 }
 
 
-
 };
 
 // function prototypes
@@ -2209,6 +2208,7 @@ int build_tree_helper(int start, const string& s, Node *parent,
 //void preorder_number(Node *node);
 //int preorder_number(Node *node, int next);
 string strip_newick_name(string &T);
+string normalized_str_subtree(Node *T);
 
 
 // build a tree from a newick string
@@ -2462,6 +2462,15 @@ void reroot_safe(Node **n, Node *new_lc) {
 	(*n)->preorder_number();
 	(*n)->edge_preorder_interval();
 }
+
+string normalized_str_subtree(Node *T) {
+	Node *copy = new Node(*T);
+	copy->normalize_order();
+	string normalized_str = copy->str_subtree();
+	copy->delete_tree();
+	return normalized_str;
+}
+
 
 
 

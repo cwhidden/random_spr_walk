@@ -39,6 +39,9 @@ int M = 1000;
 int F = 10;
 int B = 0;
 
+string PROB_FILE = "";
+bool DO_TREE_PROB = false;
+
 // USAGE
 string USAGE =
 "random_spr_walk, version 0.0.1\n";
@@ -77,6 +80,15 @@ int main(int argc, char *argv[]) {
 				}
 			}
 		}
+		else if (strcmp(arg, "-tprobs") == 0) {
+			if (max_args > argc) {
+				char *arg2 = argv[argc+1];
+				if (arg2[0] != '-') {
+					PROB_FILE = arg2;
+					DO_TREE_PROB = true;
+				}
+			}
+		}
 		else if (strcmp(arg, "--help") == 0) {
 			cout << USAGE;
 			return 0;
@@ -87,9 +99,26 @@ int main(int argc, char *argv[]) {
 	// TODO: allow a specific number for repeatability
 	srand(random_device{}());
 
+	// 1.5 read tree probabilities
+	map<string, double> tree_prob = map<string, double>();
+	if (DO_TREE_PROB) {
+		bool tree_prob_result = read_tree_probabilities(tree_prob, PROB_FILE);
+		if (!tree_prob_result) {
+			cout << "error reading probabilites from " << PROB_FILE << endl;
+			return 1;
+		}
+		DEBUG(
+		else {
+			cout << "read " << tree_prob.size() << " trees" << endl;
+			cout << tree_prob.begin()->first << endl;
+		}
+		)
+	}
+
 	// 2. generate a random tree on N leaves
 	Node *T = random_tree(N);
-	T->preorder_number();
+	T->normalize_order();
+	T->post_spr_clean();
 	if (B <= 0) {
 		cout << "0: " << T->str_subtree() << ";" << endl;
 	}
@@ -98,11 +127,15 @@ int main(int argc, char *argv[]) {
 	for (int i = 1; i <= M; i++) {
 		// 4. 	find the SPR neighborhood degree
 		int d = count_rspr_neighbors(T);
+		double logl = 1;
+		if (DO_TREE_PROB) {
+				logl = tree_prob[normalized_str_subtree(T)];
+		}
 		DEBUG(cout << d << " neighbors" << endl);
 
 		// 5. 	until done
 		bool done = false;
-		while (!done) {
+		while (!done && i <= M) {
 			// 6. 		propose a random move
 			pair<Node *, Node*> move = random_spr(T);
 			DEBUG(cout << "MOVE: " << endl;
@@ -117,14 +150,30 @@ int main(int argc, char *argv[]) {
 			DEBUG(cout << "\tproposed tree: " << T->str_subtree() << endl);
 			// 7.			determine T2's neighborhood degree
 			int d2 = count_rspr_neighbors(T);
+			double logl2 = 1;
+			if (DO_TREE_PROB) {
+				logl2 = tree_prob[normalized_str_subtree(T)];
+			}
 			DEBUG(cout << "\t" << d2 << " neighbors" << endl);
 
 			// 8.			accept with prob max(1, d(T1) / d(T2))
 			double accept_prob = (double)d / (double)d2;
+			if (DO_TREE_PROB) {
+				//accept_prob *= logl / logl2;
+				// alt
+				//accept_prob *= exp(logl2 - logl);
+			}
 			if (accept_prob > 1) {
 				accept_prob = 1;
 			}
-			DEBUG(cout << "\tacceptance probability: " << d << "/" << d2 << " = " << accept_prob << endl);
+			DEBUG(
+					cout << "\tacceptance probability: ";
+						cout << d << "/" << d2 << " * ";
+						if (DO_TREE_PROB) {
+							cout << logl2 << "/" << logl;
+						}
+						cout << " = " << accept_prob << endl
+			);
 			double r = (double)rand() / (double)RAND_MAX;
 			DEBUG(cout << "\tr = " << r << endl);
 			if (r < accept_prob) {
@@ -138,7 +187,7 @@ int main(int argc, char *argv[]) {
 				T->post_spr_clean();
 				DEBUG(cout << "\trejected" << endl);
 			}
-			//10.	sample every M trees
+			//10.	sample every F trees
 			if (i % F == 0) {
 				// 11.		output the tree
 				cout << i << ": ";
