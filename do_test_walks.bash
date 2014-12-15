@@ -14,9 +14,10 @@ for file in test/*; do
 
 	run=1;
 	while [ $run -le $NRUNS ]; do
+	mkdir -p $dir/run$run
 	echo "#!/bin/sh
 		echo -en \"\t$run\t...\";
-		./random_spr_walk -ntax $n -niterations $NITER -sfreq $SFREQ -tprobs $file > $dir/run${run}_${SFREQ}_${NITER}.t
+		./random_spr_walk -ntax $n -niterations $NITER -sfreq $SFREQ -tprobs $file > $dir/run$run/run${run}_${SFREQ}_${NITER}.t
 		echo -e \"\tdone\"
 	" | sbatch -t 7-0 -o output/${dirname}_%j
 	run=$(($run+1))
