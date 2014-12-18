@@ -1,4 +1,4 @@
-ID	cluster	dist_rf	dist_spr	PP	sqrt(PP)	sqrt_size	log_size
+name	cluster	dist_rf	dist_spr	PP	sqrt(PP)	sqrt_size	log_size
 0	1	0	0	0.981856	0.990886471801891	0.990886	-0.0079522
 1	2	2	1	0.980805	0.990355996599203	0.990356	-0.00841733
 2	3	2	1	0.980775	0.990340850414644	0.990341	-0.00843061
