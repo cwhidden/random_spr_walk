@@ -14,19 +14,20 @@ for file in test/*.rooted.tre; do
 	cd $dir
 
 # todo: only do this once
-for run in run*; do
-	echo -en "$run\t..." 1>&2
-	cd $run
-	input_trees=${dirname}.${run}.t
-	input_likelihoods=${dirname}.${run}.p
-	grep '(' ${run}_${SFREQ}_${NITER}.t |
-			sed 's/^/tree /' > $input_trees
-	# todo: put in the real likelihoods
-	cat $input_trees | awk '{print $2" "$2" "$3}' > $input_likelihoods
-	cd ..
-	echo -e "done" 1>&2
-done
-
+if [ "0" = "1" ]; then
+	for run in run*; do
+		echo -en "$run\t..." 1>&2
+		cd $run
+		input_trees=${dirname}.${run}.t
+		input_likelihoods=${dirname}.${run}.p
+		grep '(' ${run}_${SFREQ}_${NITER}.t |
+				sed 's/^/tree /' > $input_trees
+		# todo: put in the real likelihoods
+		cat $input_trees | awk '{print $2" "$2" "$3}' > $input_likelihoods
+		cd ..
+		echo -e "done" 1>&2
+	done
+fi
 	cd $top_dir
 
 	echo "#!/bin/sh
