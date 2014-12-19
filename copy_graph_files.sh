@@ -33,7 +33,8 @@ for dir in `find walks/random_walks/*-taxa/*/ -name 'spr_graphs'`; do
 								my $line = $field[0]+1;
 								my $tree = `head -n $line '$dir'/../uniq_shapes_C_sorted_by_PP | tail -n1 | grep -o '\''(.*)'\''`;
 								my $new_num = `grep -no "$tree" test/'$name'.rooted.tre | grep -o '\''^[0-9]*'\''`;
-								print "\t", $new_num;
+								my $new_num = $new_num-1;
+								print "\t$new_num\n";
 							}
 							else {
 								print "\tuniq_id\n";
