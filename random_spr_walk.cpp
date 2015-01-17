@@ -156,11 +156,14 @@ int main(int argc, char *argv[]) {
 			}
 			DEBUG(cout << "\t" << d2 << " neighbors" << endl);
 
-			// 8.			accept with prob max(1, d(T1) / d(T2))
+			// 8.			accept with prob min(1, d(T1) / d(T2)):
+            // MH ratio for proposing a move from T1 to T2 is
+            // min[1, (P(T2) / P(T1))  (g(T2 -> T1) / g(T1 -> T2))]
+            // In our case,
+            // g(T2 -> T1) = 1/d(T2) and
+            // g(T1 -> T2) = 1/d(T1)
 			double accept_prob = log((double)d / (double)d2);
 			if (DO_TREE_PROB) {
-				//accept_prob *= logl / logl2;
-				// alt
 				accept_prob += logl2 - logl;
 			}
 			if (accept_prob > log(1)) {
