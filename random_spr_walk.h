@@ -14,11 +14,14 @@ string itos(int i);
 Node *random_tree(int N);
 int count_rspr_neighbors(Node *T);
 int count_rspr_neighbors_hlpr(Node *T, int total, vector<int> &descendant_counts);
+int count_nni_neighbors(int N);
 pair<Node *, Node*> random_spr(Node *T);
 int random_spr_hlpr(Node *T, Node *n, int total, vector<int> &descendant_counts, int r, Node **source, Node **target);
 void select_neighbor(Node *T, Node *n, int r, Node **source, Node **target);
 int select_neighbor_hlpr(Node *n, int r, Node **source, Node **target);
 bool exclude_target(Node *s, Node *t);
+int random_nni_hlpr(Node *T, Node *n, int r, Node **source, Node **target);
+pair<Node *, Node*> random_nni(Node *T, int N);
 bool read_tree_probabilities(map<string, double> &tree_prob, string prob_file);
 vector<string> split(string s, string delimiters);
 string strip_branch_lengths(string &s);
@@ -105,6 +108,13 @@ int count_rspr_neighbors_hlpr(Node *T, int total, vector<int> &descendant_counts
 	return num_neighbors;
 }
 
+int count_nni_neighbors(int N) {
+	if (N <= 0) {
+		return 0;
+	}
+	return 2 * N - 4;
+}
+
 // select a random neighbor of T
 //
 // apply the same logic as count_rspr_neighbors to select a random neighbor in
@@ -151,6 +161,7 @@ int random_spr_hlpr(Node *T, Node *n, int total, vector<int> &descendant_counts,
 	}
 	return r;
 }
+
 
 void select_neighbor(Node *T, Node *n, int r, Node **source, Node **target) {
 	*source = n;
@@ -206,6 +217,47 @@ bool exclude_target(Node *s, Node *t) {
 		return true;
 	}
 	return false;
+}
+
+// select a random NNI neighbor of T
+//
+// first select a random node of depth >= 2
+// then move that subtree to its aunt
+//
+pair<Node *, Node*> random_nni(Node *T, int N) {
+	int num_neighbors = count_nni_neighbors(N);
+	int r = (rand() % num_neighbors) + 1;
+	Node *source;
+	Node *target;
+	random_nni_hlpr(T, T, r, &source, &target);
+	return make_pair(source, target);
+}
+int random_nni_hlpr(Node *T, Node *n, int r, Node **source, Node **target) {
+	DEBUG(cout << "random_nni_hlpr(" << r << ")" << endl);
+	int num_neighbors = 1;
+	// correction for depth 1 nodes
+	if (n->get_depth() <= 1) {
+		num_neighbors = 0;
+	}
+
+	DEBUG(cout << "\t" << n->str_subtree() << endl);
+	DEBUG(cout << "\tnn=" << num_neighbors << endl);
+
+	if (r <= num_neighbors) {
+		(*source) = n;
+		(*target) = n->parent()->get_sibling();
+		return -1;
+	}
+	else {
+		r -= num_neighbors; 
+	}
+	for (Node *c : n->get_children()) {
+		r = random_nni_hlpr(T, c, r, source, target);
+		if (r <= 0) {
+			break;
+		}
+	}
+	return r;
 }
 
 string itos(int i) {

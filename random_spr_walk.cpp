@@ -39,8 +39,12 @@ int M = 1000;
 int F = 10;
 int B = 0;
 
+
 string PROB_FILE = "";
 bool DO_TREE_PROB = false;
+bool NNI_ONLY = false;
+int SEED = -1;
+bool GEN_SEED = true;
 
 // USAGE
 string USAGE =
@@ -89,6 +93,19 @@ int main(int argc, char *argv[]) {
 				}
 			}
 		}
+		else if (strcmp(arg, "-seed") == 0) {
+			if (max_args > argc) {
+				char *arg2 = argv[argc+1];
+				if (arg2[0] != '-') {
+					SEED = atoi(arg2);
+					GEN_SEED = false;
+				}
+			}
+		}
+		else if (strcmp(arg, "-nni") == 0 ||
+					strcmp(arg, "--nni" ) == 0) {
+			NNI_ONLY = true;
+		}
 		else if (strcmp(arg, "--help") == 0) {
 			cout << USAGE;
 			return 0;
@@ -97,7 +114,12 @@ int main(int argc, char *argv[]) {
 
 	// initialize random number generator
 	// TODO: allow a specific number for repeatability
-	srand(random_device{}());
+	if (GEN_SEED) {
+		srand(random_device{}());
+	}
+	else {
+		srand(SEED);
+	}
 
 	// 1.5 read tree probabilities
 	map<string, double> tree_prob = map<string, double>();
@@ -126,7 +148,13 @@ int main(int argc, char *argv[]) {
 	// 3. for M iterations
 	for (int i = 1; i <= M; i++) {
 		// 4. 	find the SPR neighborhood degree
-		int d = count_rspr_neighbors(T);
+		int d;
+		if (NNI_ONLY) {
+			d = count_nni_neighbors(N);
+		}
+		else {
+			d = count_rspr_neighbors(T);
+		}
 		double logl = 1;
 		if (DO_TREE_PROB) {
 				logl = tree_prob[normalized_str_subtree(T)];
@@ -137,7 +165,13 @@ int main(int argc, char *argv[]) {
 		bool done = false;
 		while (!done && i <= M) {
 			// 6. 		propose a random move
-			pair<Node *, Node*> move = random_spr(T);
+			pair<Node *, Node*> move;
+			if (NNI_ONLY) {
+				move = random_nni(T, N);
+			}
+			else {
+				move = random_spr(T);
+			}
 			DEBUG(cout << "MOVE: " << endl;
 			cout << "\t" << move.first->str_subtree() << endl;
 			cout << "\t" << move.second->str_subtree() << endl;
@@ -149,7 +183,13 @@ int main(int argc, char *argv[]) {
 
 			DEBUG(cout << "\tproposed tree: " << T->str_subtree() << endl);
 			// 7.			determine T2's neighborhood degree
-			int d2 = count_rspr_neighbors(T);
+			int d2;
+			if (NNI_ONLY) {
+				d2 = count_nni_neighbors(N);
+			}
+			else {
+				d2 = count_rspr_neighbors(T);
+			}
 			double logl2 = 1;
 			if (DO_TREE_PROB) {
 				logl2 = tree_prob[normalized_str_subtree(T)];
